@@ -13,19 +13,23 @@ var Preview = React.createClass({
     else
       return '#000'
   },
+  handleClick: function () {
+    console.log('Selected: ', this.props.color);
+    this.props.onSelect({color: this.props.color});
+  },
   render: function () {
     var style = { backgroundColor: this.props.color
                 , color: this.getTextColor(this.props.color)
-                , width: 'calc(100% - 20px)'
+                , width: 'calc(100% - 60px)'
                 , height: '50px'
-                , margin: '10px 10px 0px 10px'
+                , margin: '0px 30px 0px 30px'
                 , lineHeight: '50px'
                 , fontFamily: 'helvetica'
                 , fontSize: '20px'
                 , textAlign: 'center'
                 };
-    return <div style={style}>
-             {this.props.label}: {this.props.color}
+    return <div style={style} onClick={this.handleClick}>
+             {this.props.color}
            </div>;
   }
 });
@@ -35,17 +39,21 @@ var Preview = React.createClass({
 // ------------------------------------------------------------------------
 var PreviewList = React.createClass({
   render: function () {
+    var showLabel = this.props.showLabel;
+    var onSelect = this.props.onPreviewSelect;
     var previewNodes = this.props.data.map(function (preview) {
       return (
         <Preview
           label={preview.label}
           color={preview.color}
           key={preview.id}
+          showLabel={showLabel}
+          onSelect={onSelect}
         />
       );
     });
     return (
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         {previewNodes}
       </div>
     );
@@ -69,7 +77,7 @@ var PreviewForm = React.createClass({
     e.preventDefault();
     var label = this.state.label.trim();
     var color = this.state.color.trim();
-    if (!label || !color) {
+    if ( (!label && this.props.showLabel) || !color) {
       return;
     }
     if (color[0] !== '#')
@@ -78,6 +86,11 @@ var PreviewForm = React.createClass({
     this.setState({label: '', color: ''});
   },
   render: function () {
+    var style = { marginLeft: '30%'
+                , marginRight: '30%'
+                , width: '40%'
+                , fontSize: '15px'
+                }
     return (
       <form onSubmit={this.handleSubmit}>
         <input
@@ -85,14 +98,17 @@ var PreviewForm = React.createClass({
           placeholder="Label"
           value={this.state.label}
           onChange={this.handleLabelChange}
+          style={{display: (this.props.showLabel ? '' : 'none')}}
         />
         <input
           type="text"
           placeholder="#Color"
           value={this.state.color}
           onChange={this.handleColorChange}
+          autoFocus={this.props.shouldFocus}
+          style={style}
         />
-        <input type="submit" value="Add" />
+        <input type="submit" value="Add" style={{display: 'none'}}/>
       </form>
     );
   }
@@ -144,11 +160,32 @@ var PreviewBox = React.createClass({
   render: function () {
     return (
       <div>
-        <h1>Color Previews</h1>
-        <PreviewList data={this.state.data} />
-        <PreviewForm onSubmit={this.handlePreviewSubmit} />
+        <PreviewForm onSubmit={this.handlePreviewSubmit} shouldFocus={true} showLabel={false} />
+        <PreviewList data={this.state.data} showLabel={false} onPreviewSelect={this.props.onPreviewSelect} />
       </div>
     );
+  }
+});
+
+
+// PAGE
+// ------------------------------------------------------------------------
+var Page = React.createClass({
+  getInitialState: function () {
+    return {backgroundColor: '#fff'};
+  },
+  setBackgroundColor: function (preview) {
+    this.setState({backgroundColor: preview.color});
+  },
+  render: function () {
+    var style = { margin: '0'
+                , padding: '0'
+                , backgroundColor: this.state.backgroundColor
+                , height: '100%'
+                }
+    return <div style={style}>
+             <PreviewBox url='/api/previews' pollInterval={2000} onPreviewSelect={this.setBackgroundColor}/>
+           </div>
   }
 });
 
@@ -156,6 +193,6 @@ var PreviewBox = React.createClass({
 // RENDER
 // ------------------------------------------------------------------------
 ReactDOM.render(
-  <PreviewBox url='/api/previews' pollInterval={2000} />,
+  <Page />,
   document.getElementById('content')
 );
