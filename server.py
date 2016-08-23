@@ -39,6 +39,28 @@ def comments_handler():
         }
     )
 
+@app.route('/api/previews', methods=['GET', 'POST'])
+def previews_handler():
+    with open('previews.json', 'r') as f:
+        previews = json.loads(f.read())
+
+    if request.method == 'POST':
+        new_preview = request.form.to_dict()
+        new_preview['id'] = int(time.time() * 1000)
+        previews.append(new_preview)
+
+        with open('previews.json', 'w') as f:
+            f.write(json.dumps(previews, indent=4, separators=(',', ': ')))
+
+    return Response(
+        json.dumps(previews),
+        mimetype='application/json',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Access-Control-Allow-Origin': '*'
+        }
+    )
+
 
 if __name__ == '__main__':
     app.run(port=int(os.environ.get("PORT", 3000)))

@@ -1,0 +1,42 @@
+[
+    {
+        "color": "#00d8ff",
+        "id": 1471927054709,
+        "label": "Primary"
+    },
+    {
+        "color": "#61dafb",
+        "id": 1471927988816,
+        "label": "Secondary"
+    },
+    {
+        "color": "#222",
+        "id": 1471928082800,
+        "label": "Background"
+    },
+    {
+        "color": "#2d2d2d",
+        "id": 1471928107713,
+        "label": "Secondary Background"
+    },
+    {
+        "color": "#cc7a6f",
+        "id": 1471928122452,
+        "label": "Accent"
+    },
+    {
+        "color": "#fafafa",
+        "id": 1471928159554,
+        "label": "Font - Light"
+    },
+    {
+        "color": "#2d2d2d",
+        "id": 1471928175436,
+        "label": "Font - Dark"
+    },
+    {
+        "color": "#f8f5ec",
+        "id": 1471928183140,
+        "label": "Warn"
+    }
+]
